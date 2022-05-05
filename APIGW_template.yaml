@@ -1,0 +1,171 @@
+swagger: '2.0'
+info:
+  title: Patient Portal API
+  description: 'Patient data application for cloud computing.'
+  version: 1.0.0
+schemes:
+  - https
+basePath: /v1
+produces:
+  - application/json
+paths:
+  /patient:
+    get:
+      summary: The endpoint for patient list home page.
+      operationId: getPatients
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: A list of general patient info
+          schema:
+            $ref: '#/definitions/PatientList'
+        '403':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /patient_detail:
+    get:
+      summary: The endpoint for getting specific patient details.
+      operationId: getPatientDetail
+      produces:
+        - application/json
+      parameters:
+        - name: patient_id
+          in: query
+          required: true
+          type: string
+      responses:
+        '200':
+          description: All data elements for patient 
+          schema:
+            $ref: '#/definitions/PatientData'
+        '403':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /metrics:
+    get:
+      summary: The endpoint for getting high level metrics.
+      operationId: getMetrics
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: High Level metrics for display  
+          schema:
+            $ref: '#/definitions/EHRMetrics'
+        '403':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /create_patient:
+    put:
+      summary: Creating a new patient in the system.
+      operationId: putPatient
+      produces:
+        - application/json
+      parameters:
+      - in: "body"
+        name: "PatientInfo"
+        required: true
+        schema:
+          $ref: "#/definitions/PatientInfo"
+      responses:
+        '200':
+          description: Successful Patient Creation   
+        '403':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /discharge_patient:
+    put:
+      summary: Discharge patient from visit.
+      operationId: dischargePatient
+      produces:
+        - application/json
+      parameters:
+      - in: "body"
+        name: "DischargeReason"
+        required: true
+        schema:
+          $ref: "#/definitions/DischargeReason"
+      responses:
+        '200':
+          description: Successful Discharge  
+        '403':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+definitions:
+  PatientData:
+    type: object
+    properties:
+      medical_records:
+        type: array
+        items: 
+          type: object
+      person:
+        type: object
+  PatientList:
+    type: array
+    items:
+      type: object
+  EHRMetrics:
+    type: object
+    properties:
+      visits:
+        type: object
+      covid_cases:
+        type: object
+  PatientInfo:
+    type: object
+    properties:
+      f_name:
+        type: string
+      l_name:
+        type: string
+      birthdate:
+        type: string
+      gender:
+        type: string
+      race:
+        type: string
+      encounter_type:
+        type: string
+  DischargeReason:
+    type: object
+    properties:
+      reason:
+        type: string
+      enc:
+        type: integer
+        format: int64
+  Error:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
