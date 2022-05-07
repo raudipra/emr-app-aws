@@ -14,13 +14,11 @@ def lambda_handler(event, context):
     
     with connection:
         with connection.cursor() as cursor:
-            sql = "SELECT * " +\
-                  "FROM (SELECT d.person_id, condition_occurrence_id, " +\
-                  "birth_datetime, first_name, last_name, MAX(condition_occurrence_id) " +\
-                  "OVER (PARTITION BY d.person_id) AS c_id, condition_status " +\
-                  "FROM `condition` AS c INNER JOIN `demographics` AS d " +\
-                  "ON c.person_id = d.person_id) AS temp " +\
-                  "WHERE condition_occurrence_id = c_id"
+            sql = "SELECT DISTINCT d.person_id, " +\
+                 "birth_datetime, first_name, last_name, MAX(end_datetime) " +\
+                 "OVER (PARTITION BY d.person_id) AS c_id " +\
+                 "FROM `demographics` AS d LEFT JOIN `encounter` AS e " +\
+                 "ON e.person_id = d.person_id "
             cursor.execute(sql)
             rows = cursor.fetchall()
     

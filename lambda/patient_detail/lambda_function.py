@@ -4,7 +4,7 @@ import pymysql
 import pymysql.cursors
 
 def lambda_handler(event, context):
-    user_id = 252369
+    user_id = event["patient_id"]
     
     # Connect to the database
     connection = pymysql.connect(host=os.environ['MYSQL_HOST'],
